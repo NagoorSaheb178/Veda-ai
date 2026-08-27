@@ -31,7 +31,15 @@ export default function Home() {
         body: formData,
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        if (!res.ok) {
+           throw new Error(res.status === 504 ? "The AI took too long to process the document. Please try again with a smaller file or try again later." : `Server error ${res.status}`);
+        }
+        throw new Error("Invalid response from server.");
+      }
 
       if (!res.ok) {
         throw new Error(data.error ?? `Server error ${res.status}`);
@@ -138,6 +146,7 @@ export default function Home() {
             flex: 1,
             minHeight: 0,
             display: "flex",
+            flexDirection: "column",
             borderRadius: 40,
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
