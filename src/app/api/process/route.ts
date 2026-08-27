@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 import { AnswerMapping, Question, Session, UnmatchedAnswer } from "@/lib/types";
 
-export const maxDuration = 120; // 2 minutes timeout for AI processing
+export const maxDuration = 60; // Max timeout for Vercel Hobby tier
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -42,6 +42,13 @@ async function generateContentWithRetry(ai: GoogleGenAI, request: any, maxRetrie
           if (match && match[1]) {
             delay = (parseFloat(match[1]) + 1) * 1000; // exact wait + 1s buffer
           }
+        }
+
+        // Vercel serverless functions will timeout if we wait too long.
+        // If the required delay is > 15 seconds, fail fast instead of getting a 504.
+        if (delay > 15000) {
+          console.warn(`[VedaAI] Rate limit delay too long (${(delay/1000).toFixed(1)}s), throwing immediately to avoid 504.`);
+          throw new Error(`Google Gemini API rate limit exceeded. Please wait ${Math.ceil(delay/1000)} seconds and try again.`);
         }
 
         console.warn(`[VedaAI] API error (${isRateLimit ? '429 Rate Limit' : 'Network'}) (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${(delay/1000).toFixed(1)}s...`);
