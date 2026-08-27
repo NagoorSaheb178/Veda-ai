@@ -154,10 +154,11 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           style={{
             flex: 1,
             minWidth: 0,
+            minHeight: 0,
             display: "flex",
             flexDirection: "column",
-            height: "auto",
-            overflow: "visible",
+            height: "100%",
+            overflowY: "auto",
             backgroundColor: "#F6F6F6", // Solid light grey to match design
             borderRadius: 24,
             padding: "20px 16px",
