@@ -153,7 +153,7 @@ export default function Home() {
                 margin: 0,
                 borderRadius: 24,
                 overflow: "hidden",
-                minHeight: 696,
+                minHeight: "60vh",
               }}
             >
               <ExtractingScreen />
