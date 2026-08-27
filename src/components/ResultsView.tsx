@@ -154,11 +154,10 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           style={{
             flex: 1,
             minWidth: 0,
-            minHeight: 0,
             display: "flex",
             flexDirection: "column",
-            height: "100%",
-            overflowY: "auto",
+            height: "auto",
+            overflow: "visible",
             backgroundColor: "#F6F6F6", // Solid light grey to match design
             borderRadius: 24,
             padding: "20px 16px",
@@ -166,286 +165,286 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           }}
         >
 
-        {/* Header + expand all */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            flexShrink: 0,
-          }}
-        >
-          <p
-            className="font-bricolage"
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#303030",
-              letterSpacing: "-0.04em",
-              margin: 0,
-            }}
-          >
-            Extracted Questions <span style={{ fontWeight: 500, color: "#7B7B7B" }}>(from question paper)</span>
-          </p>
-          <button
-            onClick={handleExpandAll}
-            className="font-bricolage desktop-only"
+          {/* Header + expand all */}
+          <div
             style={{
               display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
               alignItems: "center",
-              padding: "10px 16px",
-              background: "#FFFFFF",
-              borderRadius: 100,
-              border: "none",
-              boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.04)",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#181818",
-              cursor: "pointer",
-              letterSpacing: "-0.02em",
+              width: "100%",
+              flexShrink: 0,
             }}
           >
-            {expandAll ? "Collapse All" : "Expand All"}
-          </button>
-        </div>
-
-        {/* Question list */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            flexShrink: 0,
-          }}
-        >
-          {questions.map((q) => {
-            const mapping = getMappingForQuestion(q.id);
-            const isActive = selectedId === q.id;
-            const isExpanded = expandedIds.has(q.id);
-            const isAnswered = mapping?.isAnswered !== false;
-            const score = mapping?.score ?? 0;
-            const maxMarks = mapping?.maxMarks ?? q.maxMarks;
-            const scoreGreen = score === maxMarks && maxMarks > 0;
-
-            return (
-              <div
-                key={q.id}
-                className="question-item"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  padding: 20,
-                  gap: 16,
-                  background: "#FFFFFF",
-                  border: isActive ? "1.5px solid #FF8D36" : "1.5px solid transparent",
-                  borderRadius: 20,
-                  transition: "all 0.18s ease",
-                  cursor: "pointer",
-                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.04)",
-                }}
-                onClick={() => handleSelectQuestion(q)}
-              >
-                {/* Question row */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    width: "100%",
-                    gap: 16,
-                  }}
-                >
-                  {/* Number badge */}
-                  <QuestionBadge number={q.number} isActive={isActive} />
-
-                  {/* Text */}
-                  <p
-                    className="font-bricolage"
-                    style={{
-                      flex: 1,
-                      fontSize: 16,
-                      color: "#181818",
-                      lineHeight: "140%",
-                      fontWeight: 500,
-                      letterSpacing: "-0.02em",
-                      margin: 0,
-                    }}
-                  >
-                    {q.text}
-                  </p>
-
-                  {/* Score */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 16, flexShrink: 0 }}>
-                    <div
-                      className="font-bricolage"
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        padding: "4px 12px",
-                        background: isAnswered
-                          ? scoreGreen
-                            ? "rgba(69, 181, 41, 0.1)"
-                            : "rgba(255, 153, 0, 0.1)"
-                          : "#FFE9E2",
-                        borderRadius: 100,
-                        fontSize: 16,
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                        letterSpacing: "-0.04em",
-                        color: isAnswered
-                          ? scoreGreen
-                            ? "#34AC15"
-                            : "#E3600F"
-                          : "#C0350A",
-                      }}
-                    >
-                      {isAnswered ? score : 0} / {maxMarks}
-                    </div>
-                    {/* Chevron */}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); toggleExpand(q.id); }}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 28,
-                        height: 28,
-                        background: "#F6F6F6",
-                        borderRadius: 8,
-                        border: "none",
-                        cursor: "pointer",
-                        color: "#9CA3AF",
-                        transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.2s",
-                      }}
-                      aria-label={isExpanded ? "Collapse" : "Expand"}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Expanded: answer text + AI feedback */}
-                {isExpanded && (
-                  <div
-                    style={{
-                      padding: "0 12px 12px 12px",
-                      borderTop: "1px solid #F5F5F5",
-                      animation: "fadeInUp 0.2s ease",
-                    }}
-                  >
-                    {!isAnswered ? (
-                      <div
-                        style={{
-                          marginTop: 8,
-                          padding: "8px 12px",
-                          borderRadius: 8,
-                          backgroundColor: "#FEF2F2",
-                          border: "1px solid #FECACA",
-                          fontSize: 12.5,
-                          color: "#B91C1C",
-                          fontWeight: 500,
-                        }}
-                      >
-                        ⚠️ Not answered
-                      </div>
-                    ) : (
-                      <>
-                        {mapping?.answerText && (
-                          <div style={{ marginTop: 4 }}>
-                            <p style={{ fontSize: 12, fontWeight: 700, color: "#7B7B7B", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                              STUDENT ANSWER
-                            </p>
-                            <p style={{ fontSize: 14, color: "#303030", lineHeight: 1.6, fontStyle: "italic", fontWeight: 500 }}>
-                              &ldquo;{mapping.answerText}&rdquo;
-                            </p>
-                          </div>
-                        )}
-                        {mapping?.feedback && (
-                          <div
-                            style={{
-                              marginTop: 16,
-                              padding: "16px",
-                              borderRadius: 12,
-                              backgroundColor: "rgba(255,86,35,0.04)",
-                              border: "1px solid rgba(255,86,35,0.2)",
-                            }}
-                          >
-                            <p style={{ fontSize: 12, fontWeight: 800, color: "#FF5623", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
-                              AI FEEDBACK
-                            </p>
-                            <p style={{ fontSize: 14, color: "#181818", lineHeight: 1.6, fontWeight: 400 }}>
-                              {mapping.feedback}
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          {/* Unmatched answers */}
-          {session.unmatchedAnswers?.length > 0 && (
-            <div
+            <p
+              className="font-bricolage"
               style={{
-                marginTop: 8,
-                padding: "10px 12px",
-                borderRadius: 10,
-                backgroundColor: "#FFFBEB",
-                border: "1.5px solid #FCD34D",
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#303030",
+                letterSpacing: "-0.04em",
+                margin: 0,
               }}
             >
-              <p style={{ fontSize: 12, fontWeight: 600, color: "#92400E", marginBottom: 4 }}>
-                ⚠️ {session.unmatchedAnswers.length} unmatched answer{session.unmatchedAnswers.length > 1 ? "s" : ""} found
-              </p>
-              <p style={{ fontSize: 12, color: "#A16207" }}>
-                These answers on the sheet couldn&apos;t be matched to any question.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+              Extracted Questions <span style={{ fontWeight: 500, color: "#7B7B7B" }}>(from question paper)</span>
+            </p>
+            <button
+              onClick={handleExpandAll}
+              className="font-bricolage desktop-only"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "10px 16px",
+                background: "#FFFFFF",
+                borderRadius: 100,
+                border: "none",
+                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.04)",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "#181818",
+                cursor: "pointer",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {expandAll ? "Collapse All" : "Expand All"}
+            </button>
+          </div>
 
-      {/* ─── Right Panel: PDF Viewer ─── */}
-      <div
-        className={mobileTab === "questions" ? "desktop-only" : ""}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          overflow: "hidden",
-          backgroundColor: "#F4F4F4",
-          borderRadius: 24,
-          border: "none",
-        }}
-      >
-        {/* PDF canvas area */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <PDFViewer
-            file={answerSheetFile}
-            activeRegions={activeRegions}
-            jumpToPage={activePageIndex}
-            selectedQuestionNumber={
-              selectedId
-                ? questions.find((q) => q.id === selectedId)?.number
-                : undefined
-            }
-          />
+          {/* Question list */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              flexShrink: 0,
+            }}
+          >
+            {questions.map((q) => {
+              const mapping = getMappingForQuestion(q.id);
+              const isActive = selectedId === q.id;
+              const isExpanded = expandedIds.has(q.id);
+              const isAnswered = mapping?.isAnswered !== false;
+              const score = mapping?.score ?? 0;
+              const maxMarks = mapping?.maxMarks ?? q.maxMarks;
+              const scoreGreen = score === maxMarks && maxMarks > 0;
+
+              return (
+                <div
+                  key={q.id}
+                  className="question-item"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    padding: 20,
+                    gap: 16,
+                    background: "#FFFFFF",
+                    border: isActive ? "1.5px solid #FF8D36" : "1.5px solid transparent",
+                    borderRadius: 20,
+                    transition: "all 0.18s ease",
+                    cursor: "pointer",
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.04)",
+                  }}
+                  onClick={() => handleSelectQuestion(q)}
+                >
+                  {/* Question row */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      width: "100%",
+                      gap: 16,
+                    }}
+                  >
+                    {/* Number badge */}
+                    <QuestionBadge number={q.number} isActive={isActive} />
+
+                    {/* Text */}
+                    <p
+                      className="font-bricolage"
+                      style={{
+                        flex: 1,
+                        fontSize: 16,
+                        color: "#181818",
+                        lineHeight: "140%",
+                        fontWeight: 500,
+                        letterSpacing: "-0.02em",
+                        margin: 0,
+                      }}
+                    >
+                      {q.text}
+                    </p>
+
+                    {/* Score */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, flexShrink: 0 }}>
+                      <div
+                        className="font-bricolage"
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          padding: "4px 12px",
+                          background: isAnswered
+                            ? scoreGreen
+                              ? "rgba(69, 181, 41, 0.1)"
+                              : "rgba(255, 153, 0, 0.1)"
+                            : "#FFE9E2",
+                          borderRadius: 100,
+                          fontSize: 16,
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                          letterSpacing: "-0.04em",
+                          color: isAnswered
+                            ? scoreGreen
+                              ? "#34AC15"
+                              : "#E3600F"
+                            : "#C0350A",
+                        }}
+                      >
+                        {isAnswered ? score : 0} / {maxMarks}
+                      </div>
+                      {/* Chevron */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleExpand(q.id); }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: 28,
+                          height: 28,
+                          background: "#F6F6F6",
+                          borderRadius: 8,
+                          border: "none",
+                          cursor: "pointer",
+                          color: "#9CA3AF",
+                          transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.2s",
+                        }}
+                        aria-label={isExpanded ? "Collapse" : "Expand"}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expanded: answer text + AI feedback */}
+                  {isExpanded && (
+                    <div
+                      style={{
+                        padding: "0 12px 12px 12px",
+                        borderTop: "1px solid #F5F5F5",
+                        animation: "fadeInUp 0.2s ease",
+                      }}
+                    >
+                      {!isAnswered ? (
+                        <div
+                          style={{
+                            marginTop: 8,
+                            padding: "8px 12px",
+                            borderRadius: 8,
+                            backgroundColor: "#FEF2F2",
+                            border: "1px solid #FECACA",
+                            fontSize: 12.5,
+                            color: "#B91C1C",
+                            fontWeight: 500,
+                          }}
+                        >
+                          ⚠️ Not answered
+                        </div>
+                      ) : (
+                        <>
+                          {mapping?.answerText && (
+                            <div style={{ marginTop: 4 }}>
+                              <p style={{ fontSize: 12, fontWeight: 700, color: "#7B7B7B", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                                STUDENT ANSWER
+                              </p>
+                              <p style={{ fontSize: 14, color: "#303030", lineHeight: 1.6, fontStyle: "italic", fontWeight: 500 }}>
+                                &ldquo;{mapping.answerText}&rdquo;
+                              </p>
+                            </div>
+                          )}
+                          {mapping?.feedback && (
+                            <div
+                              style={{
+                                marginTop: 16,
+                                padding: "16px",
+                                borderRadius: 12,
+                                backgroundColor: "rgba(255,86,35,0.04)",
+                                border: "1px solid rgba(255,86,35,0.2)",
+                              }}
+                            >
+                              <p style={{ fontSize: 12, fontWeight: 800, color: "#FF5623", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
+                                AI FEEDBACK
+                              </p>
+                              <p style={{ fontSize: 14, color: "#181818", lineHeight: 1.6, fontWeight: 400 }}>
+                                {mapping.feedback}
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Unmatched answers */}
+            {session.unmatchedAnswers?.length > 0 && (
+              <div
+                style={{
+                  marginTop: 8,
+                  padding: "10px 12px",
+                  borderRadius: 10,
+                  backgroundColor: "#FFFBEB",
+                  border: "1.5px solid #FCD34D",
+                }}
+              >
+                <p style={{ fontSize: 12, fontWeight: 600, color: "#92400E", marginBottom: 4 }}>
+                  ⚠️ {session.unmatchedAnswers.length} unmatched answer{session.unmatchedAnswers.length > 1 ? "s" : ""} found
+                </p>
+                <p style={{ fontSize: 12, color: "#A16207" }}>
+                  These answers on the sheet couldn&apos;t be matched to any question.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ─── Right Panel: PDF Viewer ─── */}
+        <div
+          className={mobileTab === "questions" ? "desktop-only" : ""}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            overflow: "hidden",
+            backgroundColor: "#F4F4F4",
+            borderRadius: 24,
+            border: "none",
+          }}
+        >
+          {/* PDF canvas area */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+            <PDFViewer
+              file={answerSheetFile}
+              activeRegions={activeRegions}
+              jumpToPage={activePageIndex}
+              selectedQuestionNumber={
+                selectedId
+                  ? questions.find((q) => q.id === selectedId)?.number
+                  : undefined
+              }
+            />
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }
@@ -692,7 +691,7 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
             </span>
             <span onClick={() => changeZoom(0.1)} style={{ color: "#FFFFFF", cursor: "pointer", fontSize: 16, fontWeight: 700, lineHeight: 1 }}>+</span>
           </div>
-  
+
           {/* Page nav */}
           <div
             style={{
