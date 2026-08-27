@@ -23,6 +23,25 @@ async function fileToBase64(file: File): Promise<{ data: string; mimeType: strin
   return { data, mimeType };
 }
 
+async function generateContentWithRetry(ai: GoogleGenAI, request: any, maxRetries = 2) {
+  let lastError;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await ai.models.generateContent(request);
+    } catch (err: any) {
+      lastError = err;
+      const isNetworkError = err?.cause?.code === "ECONNRESET" || err?.message?.includes("fetch failed");
+      if (isNetworkError && attempt < maxRetries) {
+        console.warn(`[VedaAI] Network error (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in 2s...`);
+        await new Promise((res) => setTimeout(res, 2000));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
 function tryParseJson<T>(text: string, fallback: T): T {
   try {
     // Strip markdown code fences if present
@@ -66,7 +85,7 @@ Return a JSON ARRAY only — no markdown, no explanation, no code fences:
   }
 ]`;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry(ai, {
     model: "gemini-3.6-flash",
     contents: [
       {
@@ -159,7 +178,7 @@ Return JSON ONLY — no markdown, no code fences:
   ]
 }`;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry(ai, {
     model: "gemini-3.6-flash",
     contents: [
       {
@@ -242,7 +261,7 @@ Return JSON ONLY — no markdown, no code fences:
   "overallFeedback": "The student has demonstrated a good understanding overall..."
 }`;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry(ai, {
     model: "gemini-3.6-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     config: {
