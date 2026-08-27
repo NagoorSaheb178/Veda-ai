@@ -43,11 +43,11 @@ export default function UploadPage({ onSubmit, error }: UploadPageProps) {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
         alignItems: "center",
         width: 1103,
         maxWidth: "100%",
         gap: 36,
+        paddingBottom: 40,
       }}
     >
       {/* Frame 1984078310 — 789×475, flex-col, center, gap:20 */}
