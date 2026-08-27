@@ -349,7 +349,7 @@ function TeacherAvatar() {
     >
       {/* Base Teacher Avatar Image (Frame 1618872259) */}
       <Image
-        src="/Frame 1618872259.png"
+        src="/teacher.png"
         alt="AI Teacher Base"
         width={138}
         height={138}
@@ -364,7 +364,7 @@ function TeacherAvatar() {
 
       {/* Orbiting dots frame (Frame 1618872257) */}
       <Image
-        src="/Frame 1618872257.png"
+        src="/dots.png"
         alt="Orbiting Elements"
         width={113}
         height={111}
