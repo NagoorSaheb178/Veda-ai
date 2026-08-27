@@ -150,7 +150,7 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
       <div style={{ display: "flex", flex: 1, gap: 12, overflow: "hidden" }}>
         {/* ─── Left Panel: Questions ─── */}
         <div
-          className={`hide-scrollbar ${mobileTab === "answers" ? "desktop-only" : ""}`}
+          className={`hide-scrollbar mobile-results-panel ${mobileTab === "answers" ? "desktop-only" : ""}`}
           style={{
             flex: 1,
             minWidth: 0,
@@ -745,7 +745,7 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
 
       {/* Pages */}
       <div
-        className="hide-scrollbar"
+        className="hide-scrollbar mobile-results-panel"
         ref={containerRef}
         style={{
           flex: 1,
