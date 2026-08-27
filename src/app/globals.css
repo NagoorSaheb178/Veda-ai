@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --font-sans: var(--font-inter);
+  --font-bricolage: var(--font-bricolage-var);
+}
+
+:root {
+  /* Brand */
+  --primary: #FF5623;
+  --primary-hover: #E04010;
+  --primary-light: rgba(255, 86, 35, 0.08);
+  --primary-border: rgba(255, 86, 35, 0.25);
+
+  /* Backgrounds */
+  --background: #F0EDE8;
+  --foreground: #2B2B2B;
+  --sidebar-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --topbar-bg: rgba(255, 255, 255, 0.75);
+
+  /* Text */
+  --text-dark: #2B2B2B;
+  --text-muted: rgba(94, 94, 94, 0.8);
+  --text-medium: #5E5E5E;
+
+  /* Borders */
+  --border: #E5E5E5;
+  --border-dashed: #CACACA;
+
+  /* Shadows */
+  --sidebar-shadow: 0px 32px 48px 0px rgba(0,0,0,0.20), 0px 16px 48px 0px rgba(0,0,0,0.12);
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  /* Scores */
+  --score-green: #16A34A;
+  --score-orange: #EA580C;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D4D0CB; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #B5B2AD; }
+
+/* Utility */
+.font-bricolage { font-family: 'Bricolage Grotesque', sans-serif; }
+
+/* Upload card dashed border */
+.upload-card-dashed {
+  border: 1.5px dashed var(--border-dashed);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.upload-card-dashed:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.upload-card-dashed.has-file {
+  border-color: var(--primary);
+  border-style: solid;
+  background: rgba(255,86,35,0.03);
+}
+
+/* Sparkle animation for extracting screen */
+@keyframes sparkle-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.92); }
+}
+@keyframes sparkle-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes dot-orbit {
+  0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Question list item */
+.question-item {
+  transition: all 0.2s ease;
+}
+.question-item.active {
+  border: 1.5px solid var(--primary) !important;
+}
+
+/* Score badge */
+.score-badge-green { color: var(--score-green); }
+.score-badge-orange { color: var(--score-orange); }
+
+/* Mobile Responsiveness Utilities */
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+  
+  .mobile-flex-col { flex-direction: column !important; }
+  
+  /* Overrides for hardcoded absolute dimensions to fluid layouts */
+  /* Overrides for hardcoded absolute dimensions to fluid layouts */
+  .mobile-w-full {
+    width: 100% !important;
+    left: 0 !important;
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+    padding-top: 100px !important;
+  }
+  
+  .mobile-h-auto {
+    height: auto !important;
+  }
+  
+  .mobile-px-16 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .mobile-p-16 {
+    padding: 16px !important;
+  }
+  
+  /* Specific override for UploadPage centering */
+  .mobile-upload-container {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px 16px !important;
+  }
+  
+  .mobile-upload-wrapper {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+  
+  .mobile-upload-grey-box {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    gap: 16px !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+  }
+  
+  .mobile-upload-inner-box {
+    height: auto !important;
+    gap: 16px !important;
+    width: 100% !important;
+    flex-direction: column !important;
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+  }
+  
+  .mobile-h-auto { height: auto !important; }
+  .mobile-flex-col { flex-direction: column !important; }
+  
+  /* TopBar Responsive Classes */
+  .responsive-topbar {
+    position: fixed !important;
+    top: 12px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 24px) !important;
+    max-width: 373px !important;
+    border-radius: 16px !important;
+    padding: 0 16px 0 12px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05) !important;
+    margin: 0 !important;
+  }
+  
+  .mobile-hide-name { display: none !important; }
+  .avatar-container { padding: 0 !important; background: transparent !important; }
+  
+  /* UploadCard Responsive Classes */
+  .mobile-upload-card {
+    height: 127px !important;
+    padding: 16px 10px !important;
+  }
+  
+  .mobile-upload-icon-box {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 3.33px !important;
+  }
+  
+  .mobile-upload-label {
+    font-size: 18px !important;
+  }
+  
+  .mobile-upload-sublabel {
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only { display: none !important; }
+}
