@@ -131,7 +131,7 @@ export default function UploadPage({ onSubmit, error }: UploadPageProps) {
           </div>
 
           {/* Mobile Heading */}
-          <div className="mobile-only" style={{ width: "100%", justifyContent: "center" }}>
+          <div className="mobile-only" style={{ width: "100%", justifyContent: "center", flexShrink: 0 }}>
             <span
               className="font-bricolage"
               style={{
@@ -437,37 +437,100 @@ function UploadCard({ id, label, fileInfo, onFileSelect, onClear, onDrop, inputR
       />
 
       {fileInfo ? (
-        /* Uploaded state */
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, width: "100%" }}>
-          <button
-            onClick={(e) => { e.stopPropagation(); onClear(); }}
+        /* Uploaded state matching 2nd image */
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+          <div
             style={{
-              position: "absolute", top: 10, right: 10,
-              width: 22, height: 22, borderRadius: "50%",
-              border: "none", backgroundColor: "#1A1A1A", color: "white",
-              cursor: "pointer", fontSize: 14, fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
+              position: "relative",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: "12px 16px",
+              gap: 12,
+              background: "#F5F5F5",
+              borderRadius: 12,
+              maxWidth: "90%",
             }}
           >
-            ×
-          </button>
-          {/* Upload icon box — 48×48 */}
-          <div style={{
-            width: 48, height: 48, background: "#FF562320",
-            borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "#FF5623" }}>PDF</span>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <p className="font-bricolage" style={{
-              fontSize: 14, fontWeight: 600, letterSpacing: "-0.06em", color: "#303030",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 300, margin: 0,
-            }}>
-              {fileInfo.file.name}
-            </p>
-            <p style={{ fontSize: 12, color: "rgba(94,94,94,0.55)", letterSpacing: "-0.06em", marginTop: 2 }}>
-              {(fileInfo.file.size / 1_000_000).toFixed(1)} MB
-            </p>
+            {/* Red PDF Icon Box */}
+            <div
+              style={{
+                width: 32,
+                height: 36,
+                background: "#E85D54",
+                borderRadius: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#FFFFFF" }}>PDF</span>
+            </div>
+            
+            {/* File Info */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", overflow: "hidden" }}>
+              <p
+                className="font-bricolage"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  letterSpacing: "-0.02em",
+                  color: "#181818",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: 200,
+                  margin: 0,
+                }}
+              >
+                {fileInfo.file.name}
+              </p>
+              <p
+                style={{
+                  fontSize: 12,
+                  color: "rgba(94, 94, 94, 0.7)",
+                  letterSpacing: "-0.02em",
+                  marginTop: 2,
+                  margin: 0,
+                }}
+              >
+                {(() => {
+                  const bytes = fileInfo.file.size;
+                  if (bytes === 0) return '0 B';
+                  const k = 1000;
+                  const sizes = ['B', 'KB', 'MB', 'GB'];
+                  const i = Math.floor(Math.log(bytes) / Math.log(k));
+                  const sizeStr = parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+                  return sizeStr;
+                })()} • 1 File
+              </p>
+            </div>
+
+            {/* X Button (Top Right) */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onClear(); }}
+              style={{
+                position: "absolute",
+                top: -8,
+                right: -8,
+                width: 24,
+                height: 24,
+                borderRadius: "50%",
+                border: "none",
+                background: "#4B4B4B",
+                color: "#FFFFFF",
+                cursor: "pointer",
+                fontSize: 16,
+                fontWeight: 400,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
+              ×
+            </button>
           </div>
         </div>
       ) : (
