@@ -138,7 +138,9 @@ export default function Home() {
             minHeight: 0,
             display: "flex",
             borderRadius: 40,
-            overflow: "hidden",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollBehavior: "smooth",
             height: "100%",
           }}
         >
