@@ -132,7 +132,7 @@ body {
     left: 0 !important;
     max-width: 100vw !important;
     margin-left: 0 !important;
-    padding-top: 100px !important;
+    padding-top: 0px !important;
   }
   
   .mobile-h-auto {
@@ -148,15 +148,15 @@ body {
     padding: 16px !important;
   }
   
-  /* Specific override for UploadPage centering */
   .mobile-upload-container {
     width: 100% !important;
-    height: 100% !important;
+    height: auto !important; /* Let it grow */
+    min-height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
-    padding: 24px 16px !important;
+    justify-content: flex-start !important;
+    padding: 100px 16px 40px 16px !important;
   }
   
   .mobile-upload-wrapper {
@@ -228,6 +228,10 @@ body {
   
   .mobile-upload-sublabel {
     font-size: 12px !important;
+  }
+
+  .mobile-results-panel {
+    padding-top: 100px !important;
   }
 }
 
