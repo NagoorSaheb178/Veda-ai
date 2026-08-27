@@ -123,7 +123,7 @@ export default function Home() {
           paddingRight: 12,
           paddingLeft: 12,
           paddingBottom: 12,
-          height: "100vh",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           transition: "margin-left 0.3s cubic-bezier(0.4,0,0.2,1)",
@@ -133,11 +133,10 @@ export default function Home() {
         <div
           style={{
             flex: 1,
-            minHeight: 0,
             display: "flex",
             borderRadius: 40, // border-radius XL = 40px per Figma
             overflow: "visible",
-            height: "100%",
+            height: "auto",
           }}
         >
           {appState === "upload" && (
@@ -151,11 +150,10 @@ export default function Home() {
             <div
               style={{
                 flex: 1,
-                minHeight: 0,
                 margin: 0,
                 borderRadius: 24,
                 overflow: "hidden",
-                height: "100%",
+                minHeight: "60vh",
               }}
             >
               <ExtractingScreen />
@@ -166,11 +164,10 @@ export default function Home() {
             <div
               style={{
                 flex: 1,
-                minHeight: 0,
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
-                height: "100%",
+                height: "auto",
               }}
             >
               <ResultsView
