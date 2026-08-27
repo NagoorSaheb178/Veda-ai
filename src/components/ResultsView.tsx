@@ -190,7 +190,7 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           </p>
           <button
             onClick={handleExpandAll}
-            className="font-bricolage"
+            className="font-bricolage desktop-only"
             style={{
               display: "flex",
               alignItems: "center",
@@ -639,6 +639,7 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
         style={{
           display: "flex",
           flexDirection: "row",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "center",
           padding: "14px 20px",
@@ -659,7 +660,7 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
         >
           Answer Sheet
         </p>
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
           {/* Zoom */}
           <div
             style={{
