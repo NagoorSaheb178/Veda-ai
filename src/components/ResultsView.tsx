@@ -154,10 +154,13 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           style={{
             flex: 1,
             minWidth: 0,
+            minHeight: 0,
             display: "flex",
             flexDirection: "column",
-            height: "auto",
-            overflow: "visible",
+            height: "100%",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollBehavior: "smooth",
             backgroundColor: "#F6F6F6", // Solid light grey to match design
             borderRadius: 24,
             padding: "20px 16px",
@@ -752,6 +755,8 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
           padding: 16,
           gap: 16,
           overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+          scrollBehavior: "smooth",
         }}
       >
         {Array.from({ length: numPages }, (_, i) => {
