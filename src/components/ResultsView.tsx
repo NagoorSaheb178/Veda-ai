@@ -420,9 +420,10 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
         style={{
           flex: 1,
           minWidth: 0,
+          minHeight: 0,
           display: "flex",
           flexDirection: "column",
-          height: "auto",
+          height: "100%",
           overflow: "hidden",
           backgroundColor: "#F4F4F4",
           borderRadius: 24,
@@ -744,11 +745,13 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
         ref={containerRef}
         style={{
           flex: 1,
+          minHeight: 0,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           padding: 16,
           gap: 16,
+          overflowY: "auto",
         }}
       >
         {Array.from({ length: numPages }, (_, i) => {
