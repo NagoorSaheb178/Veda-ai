@@ -31,10 +31,26 @@ async function generateContentWithRetry(ai: GoogleGenAI, request: any, maxRetrie
     } catch (err: any) {
       lastError = err;
       const isNetworkError = err?.cause?.code === "ECONNRESET" || err?.message?.includes("fetch failed");
-      if (isNetworkError && attempt < maxRetries) {
-        console.warn(`[VedaAI] Network error (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in 2s...`);
-        await new Promise((res) => setTimeout(res, 2000));
+      const isRateLimit = err?.status === 429 || err?.message?.includes("429") || err?.message?.includes("RESOURCE_EXHAUSTED");
+      
+      if ((isNetworkError || isRateLimit) && attempt < maxRetries) {
+        let delay = isRateLimit ? 15000 : 2000;
+        
+        if (isRateLimit) {
+          // Try to parse exact retry delay from Gemini error message
+          const match = err?.message?.match(/retry in ([\d\.]+)s/i);
+          if (match && match[1]) {
+            delay = (parseFloat(match[1]) + 1) * 1000; // exact wait + 1s buffer
+          }
+        }
+
+        console.warn(`[VedaAI] API error (${isRateLimit ? '429 Rate Limit' : 'Network'}) (attempt ${attempt + 1}/${maxRetries + 1}). Retrying in ${(delay/1000).toFixed(1)}s...`);
+        await new Promise((res) => setTimeout(res, delay));
         continue;
+      }
+      
+      if (isRateLimit) {
+        throw new Error("Google Gemini API rate limit exceeded. Please wait a minute and try again.");
       }
       throw err;
     }
