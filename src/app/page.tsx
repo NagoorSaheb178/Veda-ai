@@ -133,6 +133,7 @@ export default function Home() {
       >
         {/* Page content */}
         <div
+          className="hide-scrollbar"
           style={{
             flex: 1,
             minHeight: 0,
