@@ -258,8 +258,9 @@ export default function UploadPage({ onSubmit, error }: UploadPageProps) {
           flexDirection: "column",
           alignItems: "center",
           gap: 12,
-          width: 410,
-          height: 78,
+          width: "100%",
+          maxWidth: 410,
+          height: "auto",
         }}
       >
         {/* Primary Button Dark — 161×44, border-radius:64, padding:12px 20px 12px 24px */}
@@ -311,7 +312,7 @@ export default function UploadPage({ onSubmit, error }: UploadPageProps) {
           </div>
         </button>
 
-        {/* Subtext — 410×22, 14px, fw400, ls -0.06em */}
+        {/* Subtext — Responsive wrapping */}
         <p
           className="font-bricolage"
           style={{
@@ -321,9 +322,12 @@ export default function UploadPage({ onSubmit, error }: UploadPageProps) {
             letterSpacing: "-0.06em",
             color: "rgba(94, 94, 94, 0.8)",
             textAlign: "center",
-            width: 410,
-            height: 22,
+            width: "100%",
+            maxWidth: 410,
+            height: "auto",
             margin: 0,
+            padding: "0 16px",
+            boxSizing: "border-box",
           }}
         >
           Once both files are uploaded, you&apos;ll able to map answers with questions
