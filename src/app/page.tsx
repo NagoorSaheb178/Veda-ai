@@ -36,7 +36,7 @@ export default function Home() {
         data = await res.json();
       } catch (err) {
         if (!res.ok) {
-           throw new Error(res.status === 504 ? "The AI took too long to process the document. Please try again with a smaller file or try again later." : `Server error ${res.status}`);
+          throw new Error(res.status === 504 ? "The AI took too long to process the document. Please try again with a smaller file or try again later." : `Server error ${res.status}`);
         }
         throw new Error("Invalid response from server.");
       }
@@ -127,12 +127,13 @@ export default function Home() {
         style={{
           boxSizing: "border-box",
           marginLeft: sidebarCollapsed ? 86 : 327, // Desktop margin
-          paddingTop: appState === "processing" ? 80 : 81, // Desktop top padding
-          paddingRight: 12,
-          paddingLeft: 12,
-          paddingBottom: 12,
-          height: "100vh",
-          maxHeight: "100vh",
+          marginTop: appState === "processing" ? 80 : 81, // Use marginTop so content starts below TopBar
+          paddingTop: 0,
+          paddingRight: 16,
+          paddingLeft: 16,
+          paddingBottom: 16,
+          height: `calc(100vh - ${appState === "processing" ? 80 : 81}px)`,
+          maxHeight: `calc(100vh - ${appState === "processing" ? 80 : 81}px)`,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
@@ -143,12 +144,13 @@ export default function Home() {
         <div
           className="hide-scrollbar"
           style={{
+            position: "relative",
             flex: 1,
             minHeight: 0,
             display: "flex",
             flexDirection: "column",
             borderRadius: 40,
-            overflowY: "auto",
+            overflowY: appState === "results" ? "hidden" : "auto",
             WebkitOverflowScrolling: "touch",
             scrollBehavior: "smooth",
             height: "100%",
@@ -179,12 +181,13 @@ export default function Home() {
           {appState === "results" && session && answerSheetFile && (
             <div
               style={{
-                flex: 1,
-                minHeight: 0,
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
-                height: "100%",
               }}
             >
               <ResultsView
