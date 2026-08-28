@@ -13,6 +13,7 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [expandAll, setExpandAll] = useState(false);
   const [mobileTab, setMobileTab] = useState<"questions" | "answers">("questions");
+  const [aspectRatios, setAspectRatios] = useState<Record<number, number>>({});
 
   const { questions, mappings, totalScore, totalMaxMarks, overallFeedback } = session;
 
@@ -57,7 +58,9 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
       style={{
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        flex: 1,
+        minHeight: 0,
+        width: "100%",
         gap: 12,
         overflow: "hidden",
       }}
@@ -69,14 +72,15 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          width: "100%",
+          width: "calc(100% - 32px)",
           maxWidth: 369,
           height: 54,
           margin: "0 auto",
           background: "#F6F6F6",
-          borderRadius: 6414,
+          borderRadius: 64,
           padding: 4,
           flexShrink: 0,
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
         }}
       >
         <button
@@ -88,19 +92,16 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            padding: mobileTab === "questions" ? "12px 24px" : "12px 16px",
+            padding: "12px 16px",
             gap: 4,
             height: 46,
             borderRadius: 64,
             background: mobileTab === "questions" ? "#303030" : "transparent",
             color: mobileTab === "questions" ? "#FFFFFF" : "rgba(94, 94, 94, 0.8)",
-            border: mobileTab === "questions" ? "1px solid #7B7B7B" : "none",
+            border: "none",
             boxShadow: mobileTab === "questions"
               ? "0px 4px 4px rgba(0, 0, 0, 0.25), 0px 32px 48px rgba(0, 0, 0, 0.2)"
               : "none",
-            filter: mobileTab === "questions"
-              ? "none"
-              : "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 32px 48px rgba(0, 0, 0, 0.2))",
             fontWeight: 500,
             fontSize: 16,
             lineHeight: "140%",
@@ -121,19 +122,16 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            padding: mobileTab === "answers" ? "12px 24px" : "12px 16px",
+            padding: "12px 16px",
             gap: 4,
             height: 46,
             borderRadius: 64,
             background: mobileTab === "answers" ? "#303030" : "transparent",
             color: mobileTab === "answers" ? "#FFFFFF" : "rgba(94, 94, 94, 0.8)",
-            border: mobileTab === "answers" ? "1px solid #7B7B7B" : "none",
+            border: "none",
             boxShadow: mobileTab === "answers"
               ? "0px 4px 4px rgba(0, 0, 0, 0.25), 0px 32px 48px rgba(0, 0, 0, 0.2)"
               : "none",
-            filter: mobileTab === "answers"
-              ? "none"
-              : "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 32px 48px rgba(0, 0, 0, 0.2))",
             fontWeight: 500,
             fontSize: 16,
             lineHeight: "140%",
@@ -147,7 +145,7 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
         </button>
       </div>
 
-      <div style={{ display: "flex", flex: 1, gap: 12, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, minHeight: 0, gap: 12, overflow: "hidden" }}>
         {/* ─── Left Panel: Questions ─── */}
         <div
           className={`hide-scrollbar mobile-results-panel ${mobileTab === "answers" ? "desktop-only" : ""}`}
@@ -162,9 +160,9 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
             WebkitOverflowScrolling: "touch",
             scrollBehavior: "smooth",
             backgroundColor: "#F6F6F6", // Solid light grey to match design
-            borderRadius: 24,
-            padding: "20px 16px",
-            gap: 20,
+            borderRadius: 20,
+            padding: "16px 16px 32px 16px", // Increased bottom padding
+            gap: 16,
           }}
         >
 
@@ -222,7 +220,12 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
               flexShrink: 0,
             }}
           >
-            {questions.map((q) => {
+            {[...questions].sort((a, b) => {
+              const numA = parseInt(a.number) || 0;
+              const numB = parseInt(b.number) || 0;
+              if (numA !== numB) return numA - numB;
+              return a.number.localeCompare(b.number);
+            }).map((q) => {
               const mapping = getMappingForQuestion(q.id);
               const isActive = selectedId === q.id;
               const isExpanded = expandedIds.has(q.id);
@@ -426,15 +429,12 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
             minHeight: 0,
             display: "flex",
             flexDirection: "column",
-            height: "100%",
-            overflow: "hidden",
-            backgroundColor: "#F4F4F4",
+            overflow: "hidden", // Keeps the inner scroll contained
             borderRadius: 24,
-            border: "none",
           }}
         >
           {/* PDF canvas area */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
             <PDFViewer
               file={answerSheetFile}
               activeRegions={activeRegions}
@@ -538,10 +538,8 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
   const [zoom, setZoom] = useState(1.0);
   const [currentPage, setCurrentPage] = useState(1);
   const pdfRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
-  const pageRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const renderTasksRef = useRef<any[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const renderTaskRef = useRef<any>(null);
 
   // Load PDF
   useEffect(() => {
@@ -554,8 +552,6 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
         if (cancelled) return;
         pdfRef.current = pdf;
         setNumPages(pdf.numPages);
-        canvasRefs.current = new Array(pdf.numPages).fill(null);
-        pageRefs.current = new Array(pdf.numPages).fill(null);
       } catch (err) {
         console.error("PDF load error:", err);
       }
@@ -564,284 +560,285 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
     return () => { cancelled = true; };
   }, [file]);
 
-  // Render pages when pdf loaded or zoom changes
-  const renderPages = useCallback(async () => {
-    if (!pdfRef.current) return;
-    // Cancel previous render tasks
-    renderTasksRef.current.forEach((t) => t?.cancel?.());
-    renderTasksRef.current = [];
-
-    for (let i = 1; i <= pdfRef.current.numPages; i++) {
-      try {
-        const page = await pdfRef.current.getPage(i);
-        const canvas = canvasRefs.current[i - 1];
-        if (!canvas) continue;
-        const viewport = page.getViewport({ scale: zoom });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) continue;
-        const task = page.render({ canvasContext: ctx, viewport });
-        renderTasksRef.current.push(task);
-        await task.promise;
-      } catch (_) {
-        // Cancelled or error — ignore
-      }
+  // Render current page
+  const renderPage = useCallback(async () => {
+    if (!pdfRef.current || !canvasRef.current) return;
+    
+    renderTaskRef.current?.cancel?.();
+    
+    try {
+      const page = await pdfRef.current.getPage(currentPage);
+      // Render at a fixed high-resolution scale for crispness
+      const renderScale = 3.0;
+      const viewport = page.getViewport({ scale: renderScale });
+      
+      const canvas = canvasRef.current;
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      // Allow CSS to control the display size
+      canvas.style.width = "100%";
+      canvas.style.height = "auto";
+      
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      
+      const renderTask = page.render({ 
+        canvasContext: ctx, 
+        viewport: viewport 
+      });
+      renderTaskRef.current = renderTask;
+      await renderTask.promise;
+    } catch (err) {
+      // Ignored
     }
-  }, [zoom, numPages]);
+  }, [currentPage]);
 
   useEffect(() => {
-    if (numPages > 0) renderPages();
-  }, [numPages, renderPages]);
+    renderPage();
+  }, [currentPage, renderPage]);
 
   // Jump to page when selection changes
   useEffect(() => {
-    const pageEl = pageRefs.current[jumpToPage];
-    if (pageEl && containerRef.current) {
-      pageEl.scrollIntoView({ behavior: "smooth", block: "center" });
-      setCurrentPage(jumpToPage + 1);
-    }
-  }, [jumpToPage, activeRegions]);
-
-  // Track scroll → update current page indicator
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    function onScroll() {
-      for (let i = pageRefs.current.length - 1; i >= 0; i--) {
-        const el = pageRefs.current[i];
-        if (el && el.getBoundingClientRect().top <= container!.getBoundingClientRect().top + 100) {
-          setCurrentPage(i + 1);
-          break;
-        }
-      }
-    }
-    container.addEventListener("scroll", onScroll, { passive: true });
-    return () => container.removeEventListener("scroll", onScroll);
-  }, [numPages]);
+    setCurrentPage(jumpToPage + 1);
+  }, [jumpToPage]);
 
   function changeZoom(delta: number) {
     setZoom((z) => Math.min(2.5, Math.max(0.5, parseFloat((z + delta).toFixed(1)))));
   }
 
-  if (numPages === 0) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 12, color: "#9CA3AF" }}>
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-          <rect x="8" y="4" width="24" height="32" rx="3" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M14 12h12M14 18h12M14 24h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-        <p style={{ fontSize: 13 }}>Loading answer sheet…</p>
-      </div>
-    );
-  }
+  const pageRegions = activeRegions.filter((r) => r.pageIndex === currentPage - 1);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Controls bar */}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        width: "100%",
+        minHeight: 0,
+        overflow: "hidden",
+        background: "#FFFFFF",
+        border: "1.25px solid rgba(0,0,0,0.1)",
+        borderRadius: 20,
+      }}
+    >
+      {/* Header */}
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
           alignItems: "center",
-          padding: "14px 20px",
-          gap: 10,
+          justifyContent: "space-between",
+          padding: "12px 18px",
           background: "#303030",
+          borderBottom: "1.25px solid rgba(0,0,0,0.1)",
           flexShrink: 0,
         }}
       >
-        <p
-          className="font-bricolage"
-          style={{
-            fontSize: 16,
-            fontWeight: 700,
-            color: "rgba(255, 255, 255, 0.8)",
-            letterSpacing: "-0.04em",
-            margin: 0,
-          }}
-        >
+        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em", color: "rgba(255,255,255,0.8)", whiteSpace: "nowrap" }}>
           Answer Sheet
-        </p>
-        <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
-          {/* Zoom */}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {/* Zoom controls */}
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
               alignItems: "center",
-              padding: "8px 12px",
-              gap: 8,
-              background: "rgba(255, 255, 255, 0.1)",
+              justifyContent: "center",
+              gap: 7,
+              padding: "7px 10px",
+              background: "rgba(255,255,255,0.1)",
               borderRadius: 8,
+              color: "#FFFFFF",
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: "-0.02em",
+              whiteSpace: "nowrap",
             }}
           >
-            <span onClick={() => changeZoom(-0.1)} style={{ color: "#FFFFFF", cursor: "pointer", fontSize: 16, fontWeight: 700, lineHeight: 1 }}>-</span>
             <span
-              className="font-bricolage"
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                color: "#FFFFFF",
-                letterSpacing: "-0.04em",
-                minWidth: 42,
-                textAlign: "center"
-              }}
+              className="smooth-btn"
+              onClick={() => changeZoom(-0.1)}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 14, height: 14 }}
             >
-              {Math.round(zoom * 100)}%
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <line x1="3" y1="8" x2="13" y2="8" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
             </span>
-            <span onClick={() => changeZoom(0.1)} style={{ color: "#FFFFFF", cursor: "pointer", fontSize: 16, fontWeight: 700, lineHeight: 1 }}>+</span>
+            <span>{Math.round(zoom * 100)}%</span>
+            <span
+              className="smooth-btn"
+              onClick={() => changeZoom(0.1)}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 14, height: 14 }}
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <line x1="8" y1="3" x2="8" y2="13" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="3" y1="8" x2="13" y2="8" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </span>
           </div>
 
-          {/* Page nav */}
+          {/* Page controls */}
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
               alignItems: "center",
-              padding: "8px 12px",
-              gap: 8,
-              background: "rgba(255, 255, 255, 0.1)",
+              justifyContent: "center",
+              gap: 7,
+              padding: "7px 10px",
+              background: "rgba(255,255,255,0.1)",
               borderRadius: 8,
+              color: "#FFFFFF",
+              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: "-0.02em",
+              whiteSpace: "nowrap",
             }}
           >
             <span
-              onClick={() => {
-                const newPage = Math.max(1, currentPage - 1);
-                setCurrentPage(newPage);
-                pageRefs.current[newPage - 1]?.scrollIntoView({ behavior: "smooth" });
-              }}
-              style={{ color: "#A9A9A9", cursor: "pointer", fontSize: 14, fontWeight: 700, lineHeight: 1 }}
+              className={`smooth-btn ${currentPage <= 1 ? "disabled" : ""}`}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 14, height: 14 }}
             >
-              {"<"}
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <polyline points="10,3 5,8 10,13" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </span>
+            <span>Page {currentPage} of {numPages || 1}</span>
             <span
-              className="font-bricolage"
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                color: "#FFFFFF",
-                letterSpacing: "-0.04em",
-              }}
+              className={`smooth-btn ${currentPage >= numPages ? "disabled" : ""}`}
+              onClick={() => setCurrentPage((p) => Math.min(numPages || 1, p + 1))}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 14, height: 14 }}
             >
-              Page {currentPage} of {numPages}
-            </span>
-            <span
-              onClick={() => {
-                const newPage = Math.min(numPages, currentPage + 1);
-                setCurrentPage(newPage);
-                pageRefs.current[newPage - 1]?.scrollIntoView({ behavior: "smooth" });
-              }}
-              style={{ color: "#FFFFFF", cursor: "pointer", fontSize: 14, fontWeight: 700, lineHeight: 1 }}
-            >
-              {">"}
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <polyline points="6,3 11,8 6,13" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </span>
           </div>
         </div>
       </div>
 
-      {/* Pages */}
+      {/* Page Content */}
+      <style>{`
+        .pdf-scroll-container::-webkit-scrollbar {
+          width: 8px;
+        }
+        .pdf-scroll-container::-webkit-scrollbar-track {
+          background: #FFFFFF;
+        }
+        .pdf-scroll-container::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 10px;
+          border: 2px solid #FFFFFF;
+        }
+        .smooth-btn {
+          transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease;
+          cursor: pointer;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .smooth-btn:active {
+          transform: scale(0.88);
+          opacity: 0.8;
+        }
+        .smooth-btn.disabled {
+          opacity: 0.4;
+          pointer-events: none;
+          transform: none;
+        }
+        .question-item {
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .question-item:active {
+          transform: scale(0.985);
+        }
+      `}</style>
       <div
-        className="hide-scrollbar mobile-results-panel"
-        ref={containerRef}
+        className="hide-scrollbar pdf-scroll-container"
         style={{
           flex: 1,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: 16,
-          gap: 16,
-          overflowY: "auto",
-          WebkitOverflowScrolling: "touch",
-          scrollBehavior: "smooth",
+          position: "relative",
+          background: "#FFFFFF",
+          overflow: "auto",
+          padding: 0,
         }}
       >
-        {Array.from({ length: numPages }, (_, i) => {
-          const pageRegions = activeRegions.filter((r) => r.pageIndex === i);
-          const isActivePage = pageRegions.length > 0;
-          return (
-            <div
-              key={i}
-              ref={(el) => { pageRefs.current[i] = el; }}
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 800,
-                background: "white",
-                boxShadow: isActivePage
-                  ? "0 0 0 2px var(--primary), 0 4px 16px rgba(0,0,0,0.1)"
-                  : "0 2px 10px rgba(0,0,0,0.08)",
-                borderRadius: 8,
-                overflow: "hidden",
-              }}
-            >
-              <canvas
-                ref={(el) => { canvasRefs.current[i] = el; }}
-                style={{ display: "block", width: "100%", height: "auto" }}
-              />
+        {numPages === 0 ? (
+          <div style={{ margin: "auto", color: "#9CA3AF", fontSize: 13, display: "flex", flexDirection: "column", alignItems: "center", gap: 12, height: "100%", justifyContent: "center" }}>
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <rect x="8" y="4" width="24" height="32" rx="3" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M14 12h12M14 18h12M14 24h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <p>Loading answer sheet…</p>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: "relative",
+              background: "white",
+              margin: "0 auto",
+              width: `${zoom * 100}%`,
+              transition: "width 0.2s ease",
+            }}
+          >
+            <canvas ref={canvasRef} style={{ display: "block" }} />
 
-              {/* Highlight overlays */}
-              {pageRegions.map((region, j) => (
-                <div
-                  key={j}
-                  style={{
-                    position: "absolute",
-                    left: `${region.x * 100}%`,
-                    top: `${region.y * 100}%`,
-                    width: `${region.width * 100}%`,
-                    height: `${region.height * 100}%`,
-                    border: "2px solid #22C55E",
-                    backgroundColor: "rgba(34,197,94,0.15)",
-                    borderRadius: 3,
-                    pointerEvents: "none",
-                    animation: "fadeInUp 0.3s ease",
-                  }}
-                >
-                  {/* Label tag */}
-                  {selectedQuestionNumber && (
+            {/* Highlight overlays */}
+            {pageRegions.map((region, j) => (
+              <div
+                key={j}
+                style={{
+                  position: "absolute",
+                  left: `calc(${region.x * 100}% - 10px)`,
+                  top: `calc(${region.y * 100}% - 10px)`,
+                  width: `calc(${region.width * 100}% + 20px)`,
+                  height: `calc(${region.height * 100}% + 20px)`,
+                  boxSizing: "border-box",
+                  border: "2px solid #3DD218",
+                  backgroundColor: "rgba(94, 255, 53, 0.1)",
+                  borderRadius: 16,
+                  pointerEvents: "none",
+                  animation: "fadeInUp 0.3s ease",
+                }}
+              >
+                {selectedQuestionNumber && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "2px 12px",
+                      height: 28,
+                      left: 16,
+                      top: -28,
+                      backgroundColor: "#3DD218",
+                      borderRadius: "8px 8px 0 0",
+                    }}
+                  >
                     <span
                       style={{
-                        position: "absolute",
-                        top: -22,
-                        left: 0,
-                        backgroundColor: "#22C55E",
-                        color: "white",
-                        fontSize: 11,
+                        fontFamily: "'Bricolage Grotesque', sans-serif",
                         fontWeight: 700,
-                        padding: "2px 6px",
-                        borderRadius: "4px 4px 0 0",
+                        fontSize: 14,
+                        lineHeight: "140%",
+                        letterSpacing: "-0.04em",
+                        color: "#FFFFFF",
                         whiteSpace: "nowrap",
                       }}
                     >
                       Q{selectedQuestionNumber}
                     </span>
-                  )}
-                </div>
-              ))}
-            </div>
-          );
-        })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-const toolbarBtnStyle: React.CSSProperties = {
-  width: 28,
-  height: 28,
-  borderRadius: 6,
-  border: "1px solid #555",
-  backgroundColor: "#3C3C3C",
-  color: "#D1D5DB",
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: 15,
-  fontWeight: 500,
-  lineHeight: 1,
-};
