@@ -123,7 +123,7 @@ export default function Home() {
 
       {/* Main content area — offset from sidebar */}
       <div
-        className={`mobile-w-full ${appState === "processing" ? "mobile-processing-layout" : ""}`}
+        className="mobile-w-full"
         style={{
           boxSizing: "border-box",
           marginLeft: sidebarCollapsed ? 86 : 327, // Desktop margin
@@ -142,7 +142,7 @@ export default function Home() {
       >
         {/* Page content */}
         <div
-          className="hide-scrollbar"
+          className="hide-scrollbar mobile-no-radius"
           style={{
             position: "relative",
             flex: 1,
@@ -165,7 +165,7 @@ export default function Home() {
 
           {appState === "processing" && (
             <div
-              className="mobile-processing-wrapper"
+              className="mobile-no-radius"
               style={{
                 flex: 1,
                 margin: 0,
