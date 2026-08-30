@@ -322,6 +322,20 @@ body {
   .mobile-results-panel {
     padding-top: 20px !important;
   }
+
+  .mobile-processing-layout {
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .mobile-processing-wrapper {
+    border-radius: 0 !important;
+  }
+  
+  .mobile-extracting-inner {
+    border-radius: 0 !important;
+  }
 }
 
 @media (min-width: 769px) {
