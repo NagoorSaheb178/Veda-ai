@@ -5,6 +5,7 @@ import Image from "next/image";
 export default function ExtractingScreen() {
   return (
     <div
+      className="mobile-extracting-inner"
       style={{
         display: "flex",
         flexDirection: "column",
