@@ -289,6 +289,11 @@ body {
     display: none !important;
   }
 
+  .answer-sheet-controls {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
   .avatar-container {
     padding: 0 !important;
     background: transparent !important;
