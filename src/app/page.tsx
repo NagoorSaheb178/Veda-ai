@@ -142,7 +142,7 @@ export default function Home() {
       >
         {/* Page content */}
         <div
-          className="hide-scrollbar mobile-no-radius"
+          className="hide-scrollbar"
           style={{
             position: "relative",
             flex: 1,
@@ -165,7 +165,6 @@ export default function Home() {
 
           {appState === "processing" && (
             <div
-              className="mobile-no-radius"
               style={{
                 flex: 1,
                 margin: 0,
