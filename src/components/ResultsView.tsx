@@ -148,7 +148,7 @@ export default function ResultsView({ session, answerSheetFile }: ResultsViewPro
       <div style={{ display: "flex", flex: 1, minHeight: 0, gap: 12, overflow: "hidden" }}>
         {/* ─── Left Panel: Questions ─── */}
         <div
-          className={`hide-scrollbar mobile-results-panel mobile-no-radius ${mobileTab === "answers" ? "desktop-only" : ""}`}
+          className={`hide-scrollbar mobile-results-panel ${mobileTab === "answers" ? "desktop-only" : ""}`}
           style={{
             flex: 1,
             minWidth: 0,
@@ -563,28 +563,30 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
   // Render current page
   const renderPage = useCallback(async () => {
     if (!pdfRef.current || !canvasRef.current) return;
-    
+
     renderTaskRef.current?.cancel?.();
-    
+
     try {
       const page = await pdfRef.current.getPage(currentPage);
-      // Render at a fixed high-resolution scale for crispness
-      const renderScale = 3.0;
+      // Use a lower scale for mobile to avoid memory limits and improve rendering speed
+      // 1.5 is crisp enough for readable text, while keeping canvas size small.
+      const isMobile = window.innerWidth <= 768;
+      const renderScale = isMobile ? 1.5 : 2.0;
       const viewport = page.getViewport({ scale: renderScale });
-      
+
       const canvas = canvasRef.current;
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       // Allow CSS to control the display size
       canvas.style.width = "100%";
       canvas.style.height = "auto";
-      
+
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      
-      const renderTask = page.render({ 
-        canvasContext: ctx, 
-        viewport: viewport 
+
+      const renderTask = page.render({
+        canvasContext: ctx,
+        viewport: viewport
       });
       renderTaskRef.current = renderTask;
       await renderTask.promise;
@@ -610,7 +612,6 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
 
   return (
     <div
-      className="mobile-no-radius"
       style={{
         display: "flex",
         flexDirection: "column",
