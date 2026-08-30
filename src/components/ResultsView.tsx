@@ -634,10 +634,10 @@ function PDFViewer({ file, activeRegions, jumpToPage, selectedQuestionNumber }: 
           flexShrink: 0,
         }}
       >
-        <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em", color: "rgba(255,255,255,0.8)", whiteSpace: "nowrap" }}>
+        <div className="desktop-only" style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 14, letterSpacing: "-0.02em", color: "rgba(255,255,255,0.8)", whiteSpace: "nowrap" }}>
           Answer Sheet
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="answer-sheet-controls" style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* Zoom controls */}
           <div
             style={{
