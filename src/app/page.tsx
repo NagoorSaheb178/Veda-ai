@@ -123,7 +123,7 @@ export default function Home() {
 
       {/* Main content area — offset from sidebar */}
       <div
-        className="mobile-w-full"
+        className={`mobile-w-full ${appState === "processing" ? "mobile-processing-layout" : ""}`}
         style={{
           boxSizing: "border-box",
           marginLeft: sidebarCollapsed ? 86 : 327, // Desktop margin
@@ -165,6 +165,7 @@ export default function Home() {
 
           {appState === "processing" && (
             <div
+              className="mobile-processing-wrapper"
               style={{
                 flex: 1,
                 margin: 0,
