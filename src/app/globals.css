@@ -201,7 +201,7 @@ body {
     margin-top: 80px !important;
     padding-top: 0 !important;
     padding-right: 16px !important;
-    padding-bottom: 0px !important;
+    padding-bottom: 40px !important;
     padding-left: 16px !important;
     height: calc(100vh - 80px) !important;
   }
@@ -321,16 +321,6 @@ body {
 
   .mobile-results-panel {
     padding-top: 20px !important;
-  }
-
-  .mobile-no-padding {
-    padding-bottom: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  
-  .mobile-no-radius {
-    border-radius: 0 !important;
   }
 }
 
